@@ -1,0 +1,16 @@
+<package>
+  <description brief="keyboard_node">
+
+     keyboard_node
+
+  </description>
+  <author>John Ware</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/keyboard_node</url>
+
+  <depend package="std_msgs"/>
+  <depend package="roscpp"/>
+</package>
+
+
