@@ -188,7 +188,7 @@ void timerCallback(const ros::TimerEvent& e) {
 	    }
 	  else if(robots_state_req == 2 || robots_state_req == 3)
 	    {
-		  ROS_INFO("Already in STOP or EMERGENCY STOP state");
+	      ROS_INFO("Already in STOP or EMERGENCY STOP state");
 	    }
 	  else
 	    {
