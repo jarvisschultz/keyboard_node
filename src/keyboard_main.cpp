@@ -73,12 +73,12 @@ void timerCallback(const ros::TimerEvent& e) {
   //ROS_DEBUG("timerCallback triggered");
   
   static bool emergency_flag = false;
-  int robots_state_req = 3;  // initialize robots_state_req to emergency stop just for safety
-  if(ros::param::has("robots_state_req"))
+  int operating_condition = 3;  // initialize operating_condition to emergency stop just for safety
+  if(ros::param::has("operating_condition"))
     {
-      ros::param::get("/robots_state_req", robots_state_req);
+      ros::param::get("/operating_condition", operating_condition);
       // did we get an emergency stop request?
-      if(robots_state_req == 3 && emergency_flag == false)
+      if(operating_condition == 3 && emergency_flag == false)
 	{
 	  ROS_WARN("Emergency Stop Requested");
 	  emergency_flag = true;
@@ -86,9 +86,9 @@ void timerCallback(const ros::TimerEvent& e) {
     }
   else
     {
-      ROS_WARN("Cannot Find Parameter: robots_state_req");
-      ROS_INFO("Setting robots_state_req to IDLE");
-      ros::param::set("/robots_state_req", 0);
+      ROS_WARN("Cannot Find Parameter: operating_condition");
+      ROS_INFO("Setting operating_condition to IDLE");
+      ros::param::set("/operating_condition", 0);
       
       return;
     }
@@ -109,19 +109,19 @@ void timerCallback(const ros::TimerEvent& e) {
 	  if(idle_flag == false)
 	    {
 	      // can we move from our current state to this state?
-	      if(robots_state_req > 1)
+	      if(operating_condition > 1)
 		{
 		  idle_flag = true;
 		  ROS_INFO("Preparing Robots State Change: IDLE");
 		  ROS_INFO("Hit 'Enter/Return' to confirm");
 		}
-	      else if(robots_state_req == 0)
+	      else if(operating_condition == 0)
 		{
 		  ROS_INFO("Already in IDLE state");
 		}
 	      else
 		{
-		  ROS_INFO("Cannot enter IDLE state from current state: %i", robots_state_req);
+		  ROS_INFO("Cannot enter IDLE state from current state: %i", operating_condition);
 		}
 	    }
 	  else
@@ -135,19 +135,19 @@ void timerCallback(const ros::TimerEvent& e) {
 	{
 	  if(run_flag == false)
 	    {
-	      if(robots_state_req < 1)
+	      if(operating_condition < 1)
 		{
 		  run_flag = true;
 		  ROS_INFO("Preparing Robots State Change: RUN");
 		  ROS_INFO("Hit 'Enter/Return' to confirm");
 		}
-	      else if(robots_state_req == 1)
+	      else if(operating_condition == 1)
 		{
 		  ROS_INFO("Already in RUN state");
 		}
 	      else
 		{
-		  ROS_INFO("Cannot enter RUN state from current state: %i", robots_state_req);
+		  ROS_INFO("Cannot enter RUN state from current state: %i", operating_condition);
 		}
 	    }
 	  else
@@ -161,14 +161,14 @@ void timerCallback(const ros::TimerEvent& e) {
 	{
 	  if(idle_flag)
 	    {
-	      ros::param::set("/robots_state_req", 0);
+	      ros::param::set("/operating_condition", 0);
 	      ROS_INFO("Robots State Change: IDLE"); 
 	      idle_flag = false;
 	      emergency_flag = false;
 	    }
 	  else if(run_flag)
 	    {
-	      ros::param::set("/robots_state_req", 1);
+	      ros::param::set("/operating_condition", 1);
 	      ROS_INFO("Robots State Change: RUN"); 
 	      run_flag = false;
 	    }
@@ -181,18 +181,18 @@ void timerCallback(const ros::TimerEvent& e) {
       // did we enter a stop command?
       else
 	{
-	  if(robots_state_req < 2)
+	  if(operating_condition < 2)
 	    {
-	      ros::param::set("/robots_state_req", 2);
+	      ros::param::set("/operating_condition", 2);
 	      ROS_INFO("Robots State Change: STOP"); 
 	    }
-	  else if(robots_state_req == 2 || robots_state_req == 3)
+	  else if(operating_condition == 2 || operating_condition == 3)
 	    {
 	      ROS_INFO("Already in STOP or EMERGENCY STOP state");
 	    }
 	  else
 	    {
-	      ROS_INFO("Cannot enter STOP state from current state: %i", robots_state_req);
+	      ROS_INFO("Cannot enter STOP state from current state: %i", operating_condition);
 	    }
 	}
     } 
