@@ -8,11 +8,12 @@
 //---------------------------------------------------------------------------
 
 /*
-int robots_state = [0,3]
+int operating_condition = [0,3]
 0: Idle
-1: Run
-2: Stop
-3: Emergency Stop
+1: Calibrate
+2: Run
+3: Stop
+4: Emergency Stop
 */
 
 
@@ -73,12 +74,12 @@ void timerCallback(const ros::TimerEvent& e) {
   //ROS_DEBUG("timerCallback triggered");
   
   static bool emergency_flag = false;
-  int operating_condition = 3;  // initialize operating_condition to emergency stop just for safety
+  int operating_condition = 4;  // initialize operating_condition to emergency stop just for safety
   if(ros::param::has("operating_condition"))
     {
       ros::param::get("/operating_condition", operating_condition);
       // did we get an emergency stop request?
-      if(operating_condition == 3 && emergency_flag == false)
+      if(operating_condition == 4 && emergency_flag == false)
 	{
 	  ROS_WARN("Emergency Stop Requested");
 	  emergency_flag = true;
@@ -94,6 +95,7 @@ void timerCallback(const ros::TimerEvent& e) {
     }
 
   static bool idle_flag = false;
+  static bool calibrate_flag = false;
   static bool run_flag = false;
 
   // check kbhit() to see if there was a keyboard strike and transfer_flag to see if there is a node sending serial data
@@ -130,18 +132,44 @@ void timerCallback(const ros::TimerEvent& e) {
 	    }
 	}
 
-      // did we enter a run command?
-      else if(c == 'P')
+      // did we enter a calibrate command?
+      else if(c == 'C')
 	{
 	  if(run_flag == false)
 	    {
 	      if(operating_condition < 1)
 		{
 		  run_flag = true;
-		  ROS_INFO("Preparing Robots State Change: RUN");
+		  ROS_INFO("Preparing Robots State Change: CALIBRATE");
 		  ROS_INFO("Hit 'Enter/Return' to confirm");
 		}
 	      else if(operating_condition == 1)
+		{
+		  ROS_INFO("Already in CALIBRATE state");
+		}
+	      else
+		{
+		  ROS_INFO("Cannot enter CALIBRATE state from current state: %i", operating_condition);
+		}
+	    }
+	  else
+	    {
+	      ROS_INFO("Need to Confirm Last Command");
+	    }
+	}
+
+      // did we enter a run command?
+      else if(c == 'P')
+	{
+	  if(run_flag == false)
+	    {
+	      if(operating_condition < 2)
+		{
+		  run_flag = true;
+		  ROS_INFO("Preparing Robots State Change: RUN");
+		  ROS_INFO("Hit 'Enter/Return' to confirm");
+		}
+	      else if(operating_condition == 2)
 		{
 		  ROS_INFO("Already in RUN state");
 		}
@@ -166,9 +194,15 @@ void timerCallback(const ros::TimerEvent& e) {
 	      idle_flag = false;
 	      emergency_flag = false;
 	    }
-	  else if(run_flag)
+	  else if(calibrate_flag)
 	    {
 	      ros::param::set("/operating_condition", 1);
+	      ROS_INFO("Robots State Change: CALIBRATE"); 
+	      calibrate_flag = false;
+	    }
+	  else if(run_flag)
+	    {
+	      ros::param::set("/operating_condition", 2);
 	      ROS_INFO("Robots State Change: RUN"); 
 	      run_flag = false;
 	    }
@@ -181,12 +215,12 @@ void timerCallback(const ros::TimerEvent& e) {
       // did we enter a stop command?
       else
 	{
-	  if(operating_condition < 2)
+	  if(operating_condition < 3)
 	    {
-	      ros::param::set("/operating_condition", 2);
+	      ros::param::set("/operating_condition", 3);
 	      ROS_INFO("Robots State Change: STOP"); 
 	    }
-	  else if(operating_condition == 2 || operating_condition == 3)
+	  else if(operating_condition == 3 || operating_condition == 4)
 	    {
 	      ROS_INFO("Already in STOP or EMERGENCY STOP state");
 	    }
