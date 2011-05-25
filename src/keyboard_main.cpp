@@ -135,11 +135,11 @@ void timerCallback(const ros::TimerEvent& e) {
       // did we enter a calibrate command?
       else if(c == 'C')
 	{
-	  if(run_flag == false)
+	  if(calibrate_flag == false)
 	    {
 	      if(operating_condition < 1)
 		{
-		  run_flag = true;
+		  calibrate_flag = true;
 		  ROS_INFO("Preparing Robots State Change: CALIBRATE");
 		  ROS_INFO("Hit 'Enter/Return' to confirm");
 		}
