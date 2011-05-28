@@ -94,7 +94,8 @@ public:
       if(c == 'I') {
 	// can we move from our current state to this state?
 	if(operating_condition > 1) {
-	  ROS_INFO("Preparing Robots State Change: IDLE");
+	  ROS_INFO("Robots State: IDLE");
+	  ros::param::set("/operating_condition", 0);
 	}
 	else if(operating_condition == 0) {
 	  ROS_INFO("Already in IDLE state");
@@ -107,7 +108,8 @@ public:
       // did we enter a calibrate command?
       else if(c == 'C')	{
 	if(operating_condition < 1) {
-	  ROS_INFO("Preparing Robots State Change: CALIBRATE");
+	  ROS_INFO("Robots State Change: CALIBRATE");
+	  ros::param::set("/operating_condition", 1);
 	}
 	else if(operating_condition == 1) {
 	  ROS_INFO("Already in CALIBRATE state");
@@ -120,7 +122,8 @@ public:
       // did we enter a run command?
       else if(c == 'P')	{
 	if(operating_condition < 2) {
-	  ROS_INFO("Preparing Robots State Change: RUN");
+	  ROS_INFO("Robots State Change: RUN");
+	  ros::param::set("/operating_condition", 2);
 	}
 	else if(operating_condition == 2) {
 	  ROS_INFO("Already in RUN state");
