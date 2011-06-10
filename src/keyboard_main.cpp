@@ -151,7 +151,7 @@ public:
 	  
 	  // define start string
 	  srv.request.robot_index = robot_index;
-	  srv.request.type = 'm';
+	  srv.request.type = (uint8_t) 'm';
 	  srv.request.Vleft = 0.0;
 	  srv.request.Vright = 0.0;
 	  srv.request.Vtop = 0.0;
