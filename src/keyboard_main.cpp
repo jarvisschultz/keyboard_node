@@ -8,12 +8,12 @@
 //---------------------------------------------------------------------------
 
 /*
-int operating_condition = [0,3]
-0: Idle
-1: Calibrate
-2: Run
-3: Stop
-4: Emergency Stop
+  int operating_condition = [0,3]
+  0: Idle
+  1: Calibrate
+  2: Run
+  3: Stop
+  4: Emergency Stop
 */
 
 
@@ -55,8 +55,10 @@ private:
   
 public:
     KeyboardNode() {
-	client = n_.serviceClient<puppeteer_msgs::speed_command>("speed_command");
-	timer = n_.createTimer(ros::Duration(0.02), &KeyboardNode::timerCallback, this);
+	client = n_.serviceClient<puppeteer_msgs::speed_command>
+	    ("speed_command");
+	timer = n_.createTimer(ros::Duration(0.02),
+			       &KeyboardNode::timerCallback, this);
     
 	ROS_INFO("Starting Keyboard Node...");
     }
@@ -65,7 +67,9 @@ public:
 	//ROS_DEBUG("timerCallback triggered");
   
 	static bool emergency_flag = false;
-	int operating_condition = 0;  // initialize operating_condition to idle for safety
+	int operating_condition = 0;  // initialize
+				      // operating_condition to idle
+				      // for safety
 	if(ros::param::has("operating_condition")) {
 	    ros::param::get("/operating_condition", operating_condition);
 	    // did we get an emergency stop request?
@@ -82,7 +86,8 @@ public:
 	    return;
 	}
     
-	// check kbhit() to see if there was a keyboard strike and transfer_flag to see if there is a node sending serial data
+	// check kbhit() to see if there was a keyboard strike and
+	// transfer_flag to see if there is a node sending serial data
 	if(kbhit()) {
 	    ROS_DEBUG("Keyboard Strike Detected");
       
@@ -101,7 +106,8 @@ public:
 		    ROS_INFO("Already in IDLE state");
 		}
 		else {
-		    ROS_INFO("Cannot enter IDLE state from current state: %i", operating_condition);
+		    ROS_INFO("Cannot enter IDLE state from current state: %i",
+			     operating_condition);
 		}
 	    }
       
@@ -114,9 +120,9 @@ public:
 		else if(operating_condition == 1) {
 		    ROS_INFO("Already in CALIBRATE state");
 		}
-		else {
-		    ROS_INFO("Cannot enter CALIBRATE state from current state: %i", operating_condition);
-		}
+		else
+		    ROS_INFO("Cannot enter CALIBRATE state"
+			     " from current state: %i", operating_condition);
 	    }
       
 	    // did we enter a run command?
@@ -129,7 +135,8 @@ public:
 		    ROS_INFO("Already in RUN state");
 		}
 		else {
-		    ROS_INFO("Cannot enter RUN state from current state: %i", operating_condition);
+		    ROS_INFO("Cannot enter RUN state from"
+			     " current state: %i", operating_condition);
 		}
 	    }
 
@@ -166,7 +173,8 @@ public:
 			    ROS_DEBUG("Send Request Denied: speed_command\n");
 			    static bool request_denied_notify = true;
 			    if(request_denied_notify) {
-				ROS_INFO("Send Requests Denied: speed_command\n");
+				ROS_INFO("Send Requests Denied: "
+					 "speed_command\n");
 				request_denied_notify = false;
 			    }
 			}
@@ -176,7 +184,8 @@ public:
 		    }
 		}
 		else {
-		    ROS_INFO("Cannot send start command from current state: %i", operating_condition);
+		    ROS_INFO("Cannot send start command from "
+			     "current state: %i", operating_condition);
 		}
 	    }
       
@@ -194,7 +203,8 @@ public:
 	
 		else
 		
-		    ROS_INFO("Cannot enter STOP state from current state: %i", operating_condition);
+		    ROS_INFO("Cannot enter STOP state from current "
+			     "state: %i", operating_condition);
 	    }
 	} 
     
@@ -217,4 +227,4 @@ int main(int argc, char** argv)
     ros::spin();
 
     return 0;
- }
+}
