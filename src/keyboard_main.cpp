@@ -70,7 +70,7 @@ public:
 	int operating_condition = 0;  // initialize
 				      // operating_condition to idle
 				      // for safety
-	if(ros::param::has("operating_condition")) {
+	if(ros::param::has("/operating_condition")) {
 	    ros::param::get("/operating_condition", operating_condition);
 	    // did we get an emergency stop request?
 	    if(operating_condition == 4 && emergency_flag == false) {
@@ -147,7 +147,7 @@ public:
 
 		    // check to see if robot index parameter exists.
 		    static int robot_index = 0;
-		    if(ros::param::has("robot_index")) {
+		    if(ros::param::has("/robot_index")) {
 			ros::param::get("/robot_index", robot_index);
 		    }
 		    else {
