@@ -92,7 +92,8 @@ public:
 	    ROS_DEBUG("Keyboard Strike Detected");
       
 	    // get key pressed
-	    int c = fgetc(stdin);
+	    char c = fgetc(stdin);
+	    int robot_index = 0;
       
 	    // what key did we press?
 	    // did we enter an idle command?
@@ -146,7 +147,6 @@ public:
 		    ROS_INFO("Sending Start String");
 
 		    // check to see if robot index parameter exists.
-		    static int robot_index = 0;
 		    if(ros::param::has("/robot_index")) {
 			ros::param::get("/robot_index", robot_index);
 		    }
@@ -188,6 +188,13 @@ public:
 			     "current state: %i", operating_condition);
 		}
 	    }
+	    else if (isdigit(c))
+	    {
+		robot_index = atoi(&c);
+		ros::param::set("/robot_index", robot_index);
+		ROS_INFO("Robot index is now %d",robot_index);
+	    }
+
       
 	    // did we enter a stop command?
 	    else
