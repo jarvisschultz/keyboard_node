@@ -8,7 +8,7 @@
 //---------------------------------------------------------------------------
 
 /*
-  int operating_condition = [0,3]
+operating_condition
   0: Idle
   1: Calibrate
   2: Run
@@ -50,8 +50,9 @@ class KeyboardNode {
 private:
     ros::NodeHandle n_;
     ros::ServiceClient client;
-    ros::Timer timer;
+    ros::Timer timer, show;
     puppeteer_msgs::speed_command srv;
+    int operating_condition;
   
 public:
     KeyboardNode() {
@@ -59,17 +60,19 @@ public:
 	    ("speed_command");
 	timer = n_.createTimer(ros::Duration(0.02),
 			       &KeyboardNode::timerCallback, this);
+	show = n_.createTimer(ros::Duration(0.5),
+			      &KeyboardNode::update_screen, this);
     
 	ROS_INFO("Starting Keyboard Node...");
+	operating_condition = 0;
     }
 
     void timerCallback(const ros::TimerEvent& e) {
 	//ROS_DEBUG("timerCallback triggered");
   
 	static bool emergency_flag = false;
-	int operating_condition = 0;  // initialize
-				      // operating_condition to idle
-				      // for safety
+
+	// initialize operating_condition to idle for safety
 	if(ros::param::has("/operating_condition")) {
 	    ros::param::get("/operating_condition", operating_condition);
 	    // did we get an emergency stop request?
@@ -82,7 +85,6 @@ public:
 	    ROS_WARN("Cannot Find Parameter: operating_condition");
 	    ROS_INFO("Setting operating_condition to IDLE");
 	    ros::param::set("/operating_condition", 0);
-      
 	    return;
 	}
     
@@ -217,6 +219,34 @@ public:
     
 	return;
     }
+
+    void update_screen(const ros::TimerEvent& e)
+	{
+	    static int last = 0;
+
+	    if (operating_condition != last)
+	    {
+		// then update the screen
+		switch(operating_condition)
+		{
+		case 0:
+		    ROS_INFO("Operating condition: IDLE");
+		    break;
+		case 1:
+		    ROS_INFO("Operating condition: CALIBRATE");
+		    break;
+		case 2:
+		    ROS_INFO("Operating condition: RUN");
+		    break;
+		case 3:
+		    ROS_INFO("Operating condition: IDLE");
+		    break;
+		}
+	    }
+	    last = operating_condition;
+	    return;
+	}
+	
 };
 
 
