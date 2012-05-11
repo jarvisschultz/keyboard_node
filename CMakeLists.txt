@@ -30,3 +30,4 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #target_link_libraries(example ${PROJECT_NAME})
 
 rosbuild_add_executable(keyboard_node src/keyboard_main.cpp)
+rosbuild_add_executable(multi_keyboard_node src/multi_keyboard.cpp)
