@@ -73,7 +73,7 @@ public:
 
 	// initialize operating_condition to idle for safety
 	if(ros::param::has("/operating_condition")) {
-	    ros::param::get("/operating_condition", operating_condition);
+	    ros::param::getCached("/operating_condition", operating_condition);
 	    // did we get an emergency stop request?
 	    if(operating_condition == 4 && emergency_flag == false) {
 		ROS_WARN("Emergency Stop Requested");
