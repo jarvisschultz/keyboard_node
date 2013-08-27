@@ -69,6 +69,8 @@ include_directories(include
 ## Declare a cpp executable
 add_executable(keyboard_node src/keyboard_main.cpp)
 add_executable(multi_keyboard_node src/multi_keyboard.cpp)
+add_dependencies(keyboard_node puppeteer_msgs_gencpp)
+add_dependencies(multi_keyboard_node puppeteer_msgs_gencpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
