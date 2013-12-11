@@ -132,6 +132,22 @@ public:
 		if(operating_condition < 2) {
 		    ROS_INFO("Robots State Change: RUN");
 		    ros::param::set("/operating_condition", 2);
+		    // for current sensing system, we automatically need to send
+		    // the start command once we enter run state:
+		    if(ros::param::has("/robot_index")) {
+			ros::param::get("/robot_index", robot_index);
+		    }
+		    else {
+			ROS_WARN("Cannot Find Parameter: robot_index");
+			ROS_INFO("Setting robot_index to 0");
+			ros::param::set("/robot_index", 0);
+		    }
+		    ROS_INFO("Sending Start String");
+		    puppeteer_msgs::RobotCommands srv;
+		    srv.robot_index = robot_index;
+		    srv.type = (uint8_t) 'm';
+		    srv.div = 0;
+		    serial_pub.publish(srv);
 		}
 		else if(operating_condition == 2) {
 		    ROS_INFO("Already in RUN state");
