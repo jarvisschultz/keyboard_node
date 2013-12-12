@@ -185,6 +185,27 @@ public:
 			     "current state: %i", operating_condition);
 		}
 	    }
+	    // did we request the measured current trajectory?
+	    else if(c == 'Z') {
+		ROS_INFO("Requested current trajectory");
+		
+		// check to see if robot index parameter exists.
+		if(ros::param::has("/robot_index")) {
+		    ros::param::get("/robot_index", robot_index);
+		}
+		else {
+		    ROS_WARN("Cannot Find Parameter: robot_index");
+		    ROS_INFO("Setting robot_index to 0");
+		    ros::param::set("/robot_index", 0);
+		}
+		// define start string
+		puppeteer_msgs::RobotCommands srv;
+		srv.robot_index = robot_index;
+		srv.type = (uint8_t) 'z';
+		srv.div = 0;
+		serial_pub.publish(srv);
+	    }
+
 	    else if (isdigit(c))
 	    {
 		robot_index = atoi(&c);
