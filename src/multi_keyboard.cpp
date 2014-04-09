@@ -207,13 +207,21 @@ public:
 	    // did we enter a stop command?
 	    else
 	    {
-		if(operating_condition < 3)
+		if(operating_condition < 2)
 		{
 		    emergency_flag = false;
 		    ros::param::set("/operating_condition", op_con_msg.STOP);
 		    op_con_msg.state = op_con_msg.STOP;
 		    state_pub.publish(op_con_msg);
-		    ROS_INFO("Robots State Change: STOP"); 
+		    ROS_INFO("Robots State Change: STOP");
+		}
+		else if(operating_condition == 2)
+		{
+		    emergency_flag = true;
+		    ros::param::set("/operating_condition", op_con_msg.EMERGENCY);
+		    op_con_msg.state = op_con_msg.EMERGENCY;
+		    state_pub.publish(op_con_msg);
+		    ROS_INFO("Robots State Change: EMERGENCY");
 		}
 		else if(operating_condition == 3 || operating_condition == 4)
 		    ROS_INFO("Already in STOP or EMERGENCY STOP state");
@@ -221,7 +229,7 @@ public:
 		    ROS_INFO("Cannot enter STOP state from current "
 			     "state: %i", operating_condition);
 	    }
-	} 
+	}
     
 	return;
     }
